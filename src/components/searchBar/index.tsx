@@ -8,6 +8,7 @@ import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { Grid } from "@mui/material";
 import fetchFlights from "../../services/flightSearchService";
+import { enqueueSnackbar } from "notistack";
 
 export interface IAirport {
   icao: string;
@@ -66,6 +67,10 @@ const FlightSearchForm: React.FC<FlightSearchFormProps> = ({
       if (!destination) setDestinationError(true);
       if (!departureDate) setDepartureDateError(true);
       if (isRoundTrip && !returnDate) setReturnDateError(true);
+
+      enqueueSnackbar("Please fill out all required fields.", {
+        variant: "error",
+      });
       return;
     }
 

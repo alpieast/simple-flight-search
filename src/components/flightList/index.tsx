@@ -31,7 +31,7 @@ const FlightList = ({ loading, flights }: FlightListProps) => {
     const year = date.getFullYear();
     const month = date.getMonth().toString().padStart(2, "0");
     const day = date.getDate().toString().padStart(2, "0");
-    return `${year} ${month} ${day}`;
+    return `${year}-${month}-${day}`;
   };
 
   return (
@@ -54,7 +54,7 @@ const FlightList = ({ loading, flights }: FlightListProps) => {
             </ListItemAvatar>
             <ListItemText
               primary={`${flight.airline} - ${originAirport?.name} to ${destinationAirport?.name}`}
-              secondary={`Departure: ${formatDate(flight.departureDate)} ${
+              secondary={`Departure: ${formatDate(flight.departureDate)}, ${
                 flight.departureTime
               }, Duration: ${flight.duration}`}
             />

@@ -5,20 +5,23 @@ import SearchBar from "./components/searchBar";
 import { airportList } from "./mock/airportList";
 import { Flight } from "./components/utils/flights";
 import FlightList from "./components/flightList";
+import { SnackbarProvider } from "notistack";
 
 function App() {
   const [loading, setLoading] = useState(false);
   const [flights, setFlights] = useState<Flight[]>([]);
 
   return (
-    <Layout>
-      <SearchBar
-        airports={airportList}
-        setLoading={setLoading}
-        setFlights={setFlights}
-      />
-      <FlightList loading={loading} flights={flights} />
-    </Layout>
+    <SnackbarProvider maxSnack={3}>
+      <Layout>
+        <SearchBar
+          airports={airportList}
+          setLoading={setLoading}
+          setFlights={setFlights}
+        />
+        <FlightList loading={loading} flights={flights} />
+      </Layout>
+    </SnackbarProvider>
   );
 }
 
