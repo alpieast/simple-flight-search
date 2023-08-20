@@ -9,6 +9,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { Grid } from "@mui/material";
 import fetchFlights from "../../services/flightSearchService";
 import { enqueueSnackbar } from "notistack";
+import { airportList } from "../../mock/airportList";
 
 export interface IAirport {
   icao: string;
@@ -30,10 +31,12 @@ interface FlightSearchFormProps {
 }
 
 const FlightSearchForm: React.FC<FlightSearchFormProps> = ({
-  airports,
   setLoading,
   setFlights,
 }) => {
+  const [filteredAirportList, setFilteredAirportList] = useState<IAirport[]>(
+    []
+  );
   const [origin, setOrigin] = useState<IAirport | null>(null);
   const [destination, setDestination] = useState<IAirport | null>(null);
   const [departureDate, setDepartureDate] = useState<Date | null>(null);
@@ -102,12 +105,26 @@ const FlightSearchForm: React.FC<FlightSearchFormProps> = ({
         >
           <Grid item xs={12} sm={6} md={2.5} lg={2.5}>
             <Autocomplete
-              options={airports}
+              options={filteredAirportList}
               getOptionLabel={(airport) => airport.name}
               value={origin}
               onChange={(event, newValue) => {
                 setOrigin(newValue);
                 setOriginError(false);
+              }}
+              onInputChange={(event, newInputValue) => {
+                if (newInputValue.length < 3) return setFilteredAirportList([]);
+
+                const lowercasedInput = newInputValue.toLowerCase();
+                const filteredOptions = airportList.filter(
+                  (option) =>
+                    option.iata.toLowerCase().includes(lowercasedInput) ||
+                    option.name.toLowerCase().includes(lowercasedInput) ||
+                    option.city.toLowerCase().includes(lowercasedInput) ||
+                    option.state.toLowerCase().includes(lowercasedInput) ||
+                    option.country.toLowerCase().includes(lowercasedInput)
+                );
+                setFilteredAirportList(filteredOptions);
               }}
               renderInput={(params) => (
                 <TextField {...params} label="Origin" error={originError} />
@@ -116,12 +133,26 @@ const FlightSearchForm: React.FC<FlightSearchFormProps> = ({
           </Grid>
           <Grid item xs={12} sm={6} md={2.5} lg={2.5}>
             <Autocomplete
-              options={airports}
+              options={filteredAirportList}
               getOptionLabel={(airport) => airport.name}
               value={destination}
               onChange={(event, newValue) => {
                 setDestination(newValue);
                 setDestinationError(false);
+              }}
+              onInputChange={(event, newInputValue) => {
+                if (newInputValue.length < 3) return setFilteredAirportList([]);
+
+                const lowercasedInput = newInputValue.toLowerCase();
+                const filteredOptions = airportList.filter(
+                  (option) =>
+                    option.iata.toLowerCase().includes(lowercasedInput) ||
+                    option.name.toLowerCase().includes(lowercasedInput) ||
+                    option.city.toLowerCase().includes(lowercasedInput) ||
+                    option.state.toLowerCase().includes(lowercasedInput) ||
+                    option.country.toLowerCase().includes(lowercasedInput)
+                );
+                setFilteredAirportList(filteredOptions);
               }}
               renderInput={(params) => (
                 <TextField
