@@ -7,6 +7,7 @@ import Button from "@mui/material/Button";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { Grid } from "@mui/material";
+import fetchFlights from "../../services/flightSearchService";
 
 export interface IAirport {
   icao: string;
@@ -23,9 +24,15 @@ export interface IAirport {
 
 interface FlightSearchFormProps {
   airports: IAirport[];
+  setLoading: (loading: boolean) => void;
+  setFlights: (flights: any[]) => void;
 }
 
-const FlightSearchForm: React.FC<FlightSearchFormProps> = ({ airports }) => {
+const FlightSearchForm: React.FC<FlightSearchFormProps> = ({
+  airports,
+  setLoading,
+  setFlights,
+}) => {
   const [origin, setOrigin] = useState<IAirport | null>(null);
   const [destination, setDestination] = useState<IAirport | null>(null);
   const [departureDate, setDepartureDate] = useState<Date | null>(null);
@@ -43,14 +50,22 @@ const FlightSearchForm: React.FC<FlightSearchFormProps> = ({ airports }) => {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    // Perform the flight search using the selected options
-    console.log("Search options:", {
-      origin,
-      destination,
-      departureDate,
-      returnDate,
-      isRoundTrip,
-    });
+    setLoading(true);
+    fetchFlights(
+      origin?.icao || "",
+      destination?.icao || "",
+      departureDate?.toISOString() || "",
+      returnDate?.toISOString() || ""
+    )
+      .then((res: any) => {
+        setFlights(res);
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   return (
