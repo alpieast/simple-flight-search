@@ -39,6 +39,11 @@ const FlightSearchForm: React.FC<FlightSearchFormProps> = ({
   const [returnDate, setReturnDate] = useState<Date | null>(null);
   const [isRoundTrip, setIsRoundTrip] = useState(false);
 
+  const [originError, setOriginError] = useState(false);
+  const [destinationError, setDestinationError] = useState(false);
+  const [departureDateError, setDepartureDateError] = useState(false);
+  const [returnDateError, setReturnDateError] = useState(false);
+
   const handleRoundTripChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -50,6 +55,20 @@ const FlightSearchForm: React.FC<FlightSearchFormProps> = ({
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
+
+    if (
+      !origin ||
+      !destination ||
+      !departureDate ||
+      (isRoundTrip && !returnDate)
+    ) {
+      if (!origin) setOriginError(true);
+      if (!destination) setDestinationError(true);
+      if (!departureDate) setDepartureDateError(true);
+      if (isRoundTrip && !returnDate) setReturnDateError(true);
+      return;
+    }
+
     setLoading(true);
     fetchFlights(
       origin?.icao || "",
@@ -81,8 +100,13 @@ const FlightSearchForm: React.FC<FlightSearchFormProps> = ({
               options={airports}
               getOptionLabel={(airport) => airport.name}
               value={origin}
-              onChange={(event, newValue) => setOrigin(newValue)}
-              renderInput={(params) => <TextField {...params} label="Origin" />}
+              onChange={(event, newValue) => {
+                setOrigin(newValue);
+                setOriginError(false);
+              }}
+              renderInput={(params) => (
+                <TextField {...params} label="Origin" error={originError} />
+              )}
             />
           </Grid>
           <Grid item xs={12} sm={6} md={2.5} lg={2.5}>
@@ -90,9 +114,16 @@ const FlightSearchForm: React.FC<FlightSearchFormProps> = ({
               options={airports}
               getOptionLabel={(airport) => airport.name}
               value={destination}
-              onChange={(event, newValue) => setDestination(newValue)}
+              onChange={(event, newValue) => {
+                setDestination(newValue);
+                setDestinationError(false);
+              }}
               renderInput={(params) => (
-                <TextField {...params} label="Destination" />
+                <TextField
+                  {...params}
+                  label="Destination"
+                  error={destinationError}
+                />
               )}
             />
           </Grid>
@@ -100,17 +131,27 @@ const FlightSearchForm: React.FC<FlightSearchFormProps> = ({
             <DatePicker
               label="Departure Date"
               value={departureDate}
-              onChange={(newValue) => setDepartureDate(newValue)}
-              sx={{ width: "100%" }}
+              onChange={(newValue) => {
+                setDepartureDate(newValue);
+                setDepartureDateError(false);
+              }}
+              sx={{
+                width: "100%",
+              }}
+              slotProps={{ textField: { error: departureDateError } }}
             />
           </Grid>
           <Grid item xs={12} sm={6} md={2.5} lg={2.5}>
             <DatePicker
               label="Return Date"
               value={returnDate}
-              onChange={(newValue) => setReturnDate(newValue)}
+              onChange={(newValue) => {
+                setReturnDate(newValue);
+                setReturnDateError(false);
+              }}
               disabled={!isRoundTrip}
               sx={{ width: "100%" }}
+              slotProps={{ textField: { error: returnDateError } }}
             />
           </Grid>
 

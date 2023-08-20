@@ -43,10 +43,10 @@ const FlightList = ({ loading, flights }: FlightListProps) => {
         const destinationAirport = airportList.find(
           (airport) => airport.icao === flight.destination
         );
-        console.log(originAirport);
+        const backgroundColor = index % 2 === 0 ? "lightgrey" : "white";
 
         return (
-          <ListItem key={index}>
+          <ListItem key={index} style={{ background: backgroundColor }}>
             <ListItemAvatar>
               <Avatar>
                 <FlightIcon />
@@ -58,10 +58,12 @@ const FlightList = ({ loading, flights }: FlightListProps) => {
                 flight.departureTime
               }, Duration: ${flight.duration}`}
             />
-            {flight.returnDate && (
+            {flight.returnDate && flight.returnTime && (
               <ListItemText
                 primary={`${flight.airline} - ${destinationAirport?.name} to ${originAirport?.name}`}
-                secondary={`Departure: ${flight.returnDate} ${flight.returnTime}, Duration: ${flight.duration}`}
+                secondary={`Departure: ${formatDate(flight.returnDate)} ${
+                  flight.returnTime
+                }, Duration: ${flight.duration}`}
               />
             )}
             <ListItemSecondaryAction>
